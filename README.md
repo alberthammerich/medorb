@@ -1,32 +1,14 @@
 # Medical AI Orbs
 
-Accessible animated status orbs for AI-assisted medical workflows.
+Calm, accessible React activity indicators for clinical AI workflows.
 
-Medical AI Orbs gives clinical products a calm, legible way to show what an
-AI system is doing, what boundary applies, and when a human needs to take over.
-It is inspired by the interaction pattern of
-[Thinking Orbs](https://orbs.jakubantalik.com/) while using an original visual
-system and medical-workflow vocabulary.
-
-## Workflow states
-
-| State | Meaning | Boundary copy |
-| --- | --- | --- |
-| `listening` | Ambient capture is active | Audio stays within the encounter boundary |
-| `transcribing` | Dialogue is becoming structured text | No clinical interpretation yet |
-| `checking` | Context and contradictions are being reviewed | Source-linked evidence only |
-| `summarizing` | A visit narrative is being drafted | Clinician review required |
-| `routing` | The next workflow step is being prepared | Nothing is sent automatically |
-| `escalating` | Human attention is required | AI action paused |
-
-## Quick start
+## Install
 
 ```bash
-npm install
-npm run dev
+npm install medical-ai-orbs
 ```
 
-## Component usage
+## Use
 
 ```tsx
 import { MedicalWorkflowOrb } from "medical-ai-orbs";
@@ -43,39 +25,86 @@ export function EncounterStatus() {
 }
 ```
 
-### Props
+### Build a state picker
+
+```tsx
+import { useState } from "react";
+import {
+  MedicalWorkflowOrb,
+  medicalWorkflowStates,
+  type MedicalWorkflowState,
+} from "medical-ai-orbs";
+import "medical-ai-orbs/styles.css";
+
+export function WorkflowPicker() {
+  const [state, setState] = useState<MedicalWorkflowState>("listening");
+
+  return (
+    <section>
+      <MedicalWorkflowOrb state={state} size={96} />
+
+      {medicalWorkflowStates.map((option) => (
+        <button
+          type="button"
+          key={option}
+          onClick={() => setState(option)}
+        >
+          {option}
+        </button>
+      ))}
+    </section>
+  );
+}
+```
+
+Run `npm run dev` to open the included playground. Switching state, size, or
+speed updates both the live orb and its exact import example.
+
+## States
+
+| State | Communicates |
+| --- | --- |
+| `listening` | Encounter capture is active |
+| `checking` | Health signals are being read |
+| `full-picture` | Patient context is being connected |
+| `documenting` | The encounter note is being written |
+| `summarizing` | Information is condensing into a brief |
+| `routing` | The next care step is being prepared |
+| `review-needed` | Work is handed to a clinician |
+
+## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `state` | `listening \| transcribing \| checking \| summarizing \| routing \| escalating` | required |
+| `state` | `MedicalWorkflowState` | required |
 | `size` | `number` | `72` |
 | `label` | `string` | State-specific accessible label |
 | `speed` | `number` | `1` |
 | `className` | `string` | `""` |
 
-## Design principles
+`speed` is a multiplier (`2` is twice as fast). Invalid sizes and speeds fall
+back to safe values.
 
-- Motion communicates activity, never certainty.
-- Every visual state should be paired with explicit boundary copy.
-- Escalation is visually distinct and pauses automated action.
+## Accessibility
+
+- Plain-language accessible labels are included by default.
+- Custom workflow detail belongs in `label`.
 - `prefers-reduced-motion` is respected.
-- The component exposes a plain-language accessible label.
+- Motion indicates activity, never clinical certainty.
 
-## Development
+## Develop
 
 ```bash
-npm run typecheck
-npm run build
-npm run preview
+npm install
+npm run dev
+npm test
+npm run check
 ```
 
-The build produces both the demo site and an ES module package in `dist/lib`.
+`npm run check` builds the demo and library, runs package smoke tests, and
+inspects the npm tarball.
 
-## Scope
+Inspired by [Thinking Orbs](https://orbs.jakubantalik.com/), with an original
+medical workflow vocabulary and visual system.
 
-This is a visual interface component, not a medical device and not a source of
-clinical guidance.
-
-## License
-
-MIT
+MIT. This is an interface component, not a medical device or clinical guidance.

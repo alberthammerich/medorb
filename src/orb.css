@@ -1,243 +1,390 @@
 .medical-orb {
   --orb-size: 72px;
   --orb-speed: 1s;
-  --orb-ink: #133c3a;
-  --orb-glow: #73d7bc;
-  --orb-alert: #f06f5f;
+  --orb-rgb: 206 255 238;
   align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
   height: var(--orb-size);
   justify-content: center;
+  perspective: calc(var(--orb-size) * 2.8);
   position: relative;
   width: var(--orb-size);
 }
 
 .medical-orb__field {
-  background:
-    radial-gradient(circle at 35% 28%, rgb(255 255 255 / 0.84), transparent 16%),
-    radial-gradient(circle at 55% 62%, var(--orb-glow), var(--orb-ink) 72%);
-  border: 1px solid rgb(19 60 58 / 0.14);
-  border-radius: 50%;
-  box-shadow:
-    inset 0 0 calc(var(--orb-size) * 0.2) rgb(255 255 255 / 0.48),
-    0 calc(var(--orb-size) * 0.14) calc(var(--orb-size) * 0.42)
-      rgb(19 60 58 / 0.2);
-  height: 76%;
-  overflow: hidden;
+  height: 100%;
   position: relative;
-  transform: translateZ(0);
-  width: 76%;
+  transform-style: preserve-3d;
+  width: 100%;
 }
 
-.medical-orb__core {
-  background: rgb(247 255 252 / 0.72);
-  border-radius: 50%;
-  filter: blur(calc(var(--orb-size) * 0.02));
-  height: 23%;
-  left: 38%;
+.medical-orb__aura {
+  background: radial-gradient(
+    circle,
+    rgb(var(--orb-rgb) / 0.14) 0,
+    rgb(var(--orb-rgb) / 0.045) 35%,
+    transparent 70%
+  );
+  filter: blur(calc(var(--orb-size) * 0.04));
+  inset: 9%;
   position: absolute;
-  top: 37%;
-  width: 23%;
 }
 
 .medical-orb__particles {
-  inset: 0;
-  position: absolute;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  width: 100%;
 }
 
 .medical-orb__particles span {
-  background: rgb(247 255 252 / 0.88);
+  background: rgb(var(--orb-rgb) / var(--particle-alpha));
   border-radius: 50%;
-  height: 3px;
-  left: calc(50% - 1.5px);
+  box-shadow: 0 0 4px rgb(var(--orb-rgb) / 0.48);
+  height: clamp(1px, calc(var(--orb-size) * 0.027), 3px);
+  left: 50%;
+  opacity: var(--particle-alpha);
   position: absolute;
-  top: calc(50% - 1.5px);
+  top: 50%;
   transform:
-    rotate(var(--particle-angle))
-    translateX(calc(var(--orb-size) * 0.22))
-    scale(var(--particle-scale));
-  transform-origin: 1.5px 1.5px;
-  width: 3px;
+    translate3d(
+      var(--particle-x),
+      var(--particle-y),
+      var(--particle-z)
+    )
+    rotate(var(--particle-rotation))
+    scale(var(--particle-scale-x), var(--particle-scale-y));
+  width: clamp(1px, calc(var(--orb-size) * 0.027), 3px);
 }
 
 .medical-orb__scan {
-  background: rgb(255 255 255 / 0.68);
-  height: 1px;
-  left: 14%;
-  opacity: 0;
-  position: absolute;
-  right: 14%;
-  top: 50%;
+  display: none;
 }
 
-.medical-orb--listening .medical-orb__field {
-  animation: orb-breathe calc(var(--orb-speed) * 2.4) ease-in-out infinite;
+.medical-orb--listening {
+  --orb-rgb: 194 255 232;
+}
+
+.medical-orb--listening .medical-orb__particles {
+  animation:
+    orb-turn calc(var(--orb-speed) * 7) linear infinite,
+    orb-breathe calc(var(--orb-speed) * 2.6) ease-in-out infinite;
 }
 
 .medical-orb--listening::before,
 .medical-orb--listening::after {
-  border: 1px solid rgb(19 60 58 / 0.22);
+  border: 1px solid rgb(var(--orb-rgb) / 0.16);
   border-radius: 50%;
   content: "";
-  height: 70%;
+  inset: 19%;
   position: absolute;
-  width: 70%;
-  animation: orb-listen calc(var(--orb-speed) * 2) ease-out infinite;
+  animation: orb-ring calc(var(--orb-speed) * 2.4) ease-out infinite;
 }
 
 .medical-orb--listening::after {
-  animation-delay: calc(var(--orb-speed) * -1);
+  animation-delay: calc(var(--orb-speed) * -1.2);
 }
 
-.medical-orb--transcribing {
-  --orb-ink: #22536d;
-  --orb-glow: #98d2e5;
+.medical-orb--documenting {
+  --orb-rgb: 192 226 255;
 }
 
-.medical-orb--transcribing .medical-orb__particles {
-  animation: orb-wave calc(var(--orb-speed) * 1.4) ease-in-out infinite;
+.medical-orb--documenting .medical-orb__particles {
+  animation: document-emblem calc(var(--orb-speed) * 4.8) ease-in-out infinite;
+  transform-style: preserve-3d;
 }
 
-.medical-orb--transcribing .medical-orb__particles span {
-  transform:
-    translate(var(--particle-x), var(--particle-y))
-    scaleY(var(--particle-scale));
-}
-
-.medical-orb--checking {
-  --orb-ink: #3e5a3a;
-  --orb-glow: #b4d98b;
-}
-
-.medical-orb--checking .medical-orb__field {
-  background:
-    linear-gradient(rgb(255 255 255 / 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 0.12) 1px, transparent 1px),
-    radial-gradient(circle at 35% 28%, rgb(255 255 255 / 0.84), transparent 16%),
-    radial-gradient(circle at 55% 62%, var(--orb-glow), var(--orb-ink) 72%);
-  background-size: 14% 14%, 14% 14%, auto, auto;
-}
-
-.medical-orb--checking .medical-orb__scan {
-  animation: orb-scan calc(var(--orb-speed) * 1.6) ease-in-out infinite;
-  box-shadow: 0 0 8px rgb(255 255 255 / 0.9);
-  opacity: 1;
-}
-
-.medical-orb--summarizing {
-  --orb-ink: #5c4a75;
-  --orb-glow: #d1bce7;
-}
-
-.medical-orb--summarizing .medical-orb__particles {
-  animation: orb-orbit calc(var(--orb-speed) * 5) linear infinite;
-}
-
-.medical-orb--summarizing .medical-orb__particles span:nth-child(3n) {
-  transform:
-    rotate(var(--particle-angle))
-    translateX(calc(var(--orb-size) * 0.14));
-}
-
-.medical-orb--routing {
-  --orb-ink: #7a5326;
-  --orb-glow: #f2c877;
-}
-
-.medical-orb--routing .medical-orb__particles span {
-  animation: orb-route calc(var(--orb-speed) * 1.8) ease-in-out infinite;
+.medical-orb--documenting .medical-orb__particles span {
+  animation: particle-write calc(var(--orb-speed) * 2.8) ease-in-out infinite;
   animation-delay: var(--particle-delay);
 }
 
-.medical-orb--escalating {
-  --orb-ink: #71352e;
-  --orb-glow: var(--orb-alert);
+.medical-orb--checking {
+  --orb-rgb: 192 226 255;
 }
 
-.medical-orb--escalating .medical-orb__field {
-  animation: orb-alert calc(var(--orb-speed) * 1.2) ease-in-out infinite;
+.medical-orb--checking .medical-orb__particles span {
+  animation: particle-wave calc(var(--orb-speed) * 1.4) ease-in-out infinite;
+  animation-delay: var(--particle-delay);
 }
 
-.medical-orb--escalating .medical-orb__particles {
-  animation: orb-orbit calc(var(--orb-speed) * 2.2) linear infinite reverse;
+.medical-orb--full-picture {
+  --orb-rgb: 216 255 192;
+}
+
+.medical-orb--full-picture .medical-orb__particles {
+  animation: body-breathe calc(var(--orb-speed) * 5.6) ease-in-out infinite;
+}
+
+.medical-orb--full-picture .medical-orb__particles span {
+  animation: body-pixel calc(var(--orb-speed) * 6.8) ease-in-out infinite;
+  animation-delay: var(--particle-delay);
+}
+
+.medical-orb--full-picture .medical-orb__scan {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--orb-rgb) / 0.9),
+    transparent
+  );
+  box-shadow: 0 0 8px rgb(var(--orb-rgb) / 0.65);
+  display: block;
+  height: 1px;
+  left: 18%;
+  position: absolute;
+  right: 18%;
+  top: 50%;
+  animation: orb-scan calc(var(--orb-speed) * 4.4) cubic-bezier(0.45, 0, 0.55, 1)
+    infinite;
+}
+
+.medical-orb--summarizing {
+  --orb-rgb: 233 214 255;
+}
+
+.medical-orb--summarizing .medical-orb__particles {
+  animation: summary-breathe calc(var(--orb-speed) * 7.2) ease-in-out infinite;
+}
+
+.medical-orb--summarizing .medical-orb__particles span {
+  animation: summary-resolve calc(var(--orb-speed) * 7.2)
+    cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.medical-orb--routing {
+  --orb-rgb: 255 224 164;
+}
+
+.medical-orb--routing .medical-orb__particles {
+  animation: torus-turn calc(var(--orb-speed) * 4.5) linear infinite;
+}
+
+.medical-orb--routing .medical-orb__particles span {
+  animation: particle-route calc(var(--orb-speed) * 1.9) ease-in-out infinite;
+  animation-delay: var(--particle-delay);
+}
+
+.medical-orb--review-needed {
+  --orb-rgb: 255 165 150;
+}
+
+.medical-orb--review-needed .medical-orb__particles {
+  animation: handoff-breathe calc(var(--orb-speed) * 5.8) ease-in-out infinite;
+}
+
+.medical-orb--review-needed .medical-orb__particles span {
+  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.35);
+}
+
+.medical-orb--review-needed
+  .medical-orb__particles
+  span[data-particle-group="source-left"] {
+  --orb-rgb: 192 226 255;
+}
+
+.medical-orb--review-needed
+  .medical-orb__particles
+  span[data-particle-group="source-right"] {
+  --orb-rgb: 205 255 226;
+}
+
+.medical-orb--review-needed
+  .medical-orb__particles
+  span[data-particle-group="handoff"] {
+  animation: handoff-signal calc(var(--orb-speed) * 4.8)
+    cubic-bezier(0.55, 0, 0.25, 1) infinite;
+}
+
+@keyframes orb-turn {
+  to {
+    transform: rotateY(360deg) rotateZ(8deg);
+  }
+}
+
+@keyframes torus-turn {
+  from {
+    transform: rotateX(64deg) rotateZ(0);
+  }
+  to {
+    transform: rotateX(64deg) rotateZ(360deg);
+  }
 }
 
 @keyframes orb-breathe {
   0%,
   100% {
-    filter: saturate(0.9);
-    transform: scale(0.93);
+    scale: 0.9;
   }
   50% {
-    filter: saturate(1.2);
-    transform: scale(1);
+    scale: 1.04;
   }
 }
 
-@keyframes orb-listen {
+@keyframes orb-ring {
   0% {
     opacity: 0.55;
-    transform: scale(0.68);
+    transform: scale(0.65);
   }
   100% {
     opacity: 0;
-    transform: scale(1.22);
+    transform: scale(1.45);
   }
 }
 
-@keyframes orb-wave {
+@keyframes particle-write {
   0%,
   100% {
-    transform: rotate(-8deg) scaleY(0.78);
+    filter: brightness(0.42);
   }
   50% {
-    transform: rotate(8deg) scaleY(1.22);
+    filter: brightness(1.45);
+  }
+}
+
+@keyframes document-emblem {
+  0%,
+  100% {
+    transform: rotateY(-5deg) translateY(-2px);
+  }
+  50% {
+    transform: rotateY(5deg) translateY(2px);
+  }
+}
+
+@keyframes particle-wave {
+  0%,
+  100% {
+    opacity: calc(var(--particle-alpha) * 0.45);
+    translate: 0 -2px;
+  }
+  50% {
+    opacity: var(--particle-alpha);
+    translate: 0 2px;
+  }
+}
+
+@keyframes body-breathe {
+  0%,
+  100% {
+    scale: 0.97;
+  }
+  50% {
+    scale: 1.01;
+  }
+}
+
+@keyframes body-pixel {
+  0%,
+  100% {
+    filter: brightness(0.76);
+  }
+  50% {
+    filter: brightness(1.12);
   }
 }
 
 @keyframes orb-scan {
-  0%,
-  100% {
-    transform: translateY(calc(var(--orb-size) * -0.22));
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--orb-size) * -0.43));
   }
-  50% {
-    transform: translateY(calc(var(--orb-size) * 0.22));
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--orb-size) * 0.43));
   }
 }
 
-@keyframes orb-orbit {
-  to {
-    transform: rotate(360deg);
+@keyframes summary-breathe {
+  0%,
+  100% {
+    transform: scale(0.98);
+  }
+  50% {
+    transform: scale(1.02);
   }
 }
 
-@keyframes orb-route {
+@keyframes summary-resolve {
   0%,
+  18%,
   100% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 1;
+    filter: brightness(0.62);
     transform:
-      rotate(var(--particle-angle))
-      translateX(calc(var(--orb-size) * 0.25))
-      scale(1.4);
+      translate3d(
+        var(--particle-x),
+        var(--particle-y),
+        var(--particle-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y));
+  }
+  52%,
+  78% {
+    filter: brightness(1.22);
+    transform:
+      translate3d(
+        var(--particle-target-x),
+        var(--particle-target-y),
+        var(--particle-target-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y));
   }
 }
 
-@keyframes orb-alert {
+@keyframes particle-route {
   0%,
   100% {
-    box-shadow:
-      inset 0 0 calc(var(--orb-size) * 0.2) rgb(255 255 255 / 0.48),
-      0 calc(var(--orb-size) * 0.14) calc(var(--orb-size) * 0.42)
-        rgb(113 53 46 / 0.2);
+    filter: brightness(0.55);
   }
   50% {
-    box-shadow:
-      inset 0 0 calc(var(--orb-size) * 0.2) rgb(255 255 255 / 0.68),
-      0 0 calc(var(--orb-size) * 0.5) rgb(240 111 95 / 0.56);
+    filter: brightness(1.7);
+  }
+}
+
+@keyframes handoff-breathe {
+  0%,
+  100% {
+    transform: scale(0.98);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes handoff-signal {
+  0%,
+  20%,
+  100% {
+    filter: brightness(0.7);
+    transform:
+      translate3d(
+        var(--particle-x),
+        var(--particle-y),
+        var(--particle-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y));
+  }
+  58%,
+  82% {
+    filter: brightness(1.35);
+    transform:
+      translate3d(
+        var(--particle-target-x),
+        var(--particle-target-y),
+        var(--particle-target-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y));
   }
 }
 

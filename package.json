@@ -2,10 +2,22 @@
   "name": "medical-ai-orbs",
   "version": "0.1.0",
   "description": "Accessible animated status orbs for AI-assisted medical workflows.",
+  "author": "Albert Hammerich",
+  "homepage": "https://github.com/alberthammerich/medical-ai-orbs#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alberthammerich/medical-ai-orbs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alberthammerich/medical-ai-orbs/issues"
+  },
   "type": "module",
   "main": "./dist/lib/medical-ai-orbs.js",
   "module": "./dist/lib/medical-ai-orbs.js",
   "types": "./dist/lib/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/lib/index.d.ts",
@@ -19,17 +31,21 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build && vite build --config vite.lib.config.ts",
+    "check": "npm test && npm pack --dry-run --cache .npm-cache",
+    "test": "npm run build && node scripts/smoke-test.mjs",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run check"
   },
   "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18"
+    "react": ">=18"
   },
   "devDependencies": {
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.7.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^5.0.3"
@@ -43,5 +59,12 @@
     "animation",
     "design-system"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@11.10.1"
 }
