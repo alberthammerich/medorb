@@ -1,0 +1,47 @@
+{
+  "name": "medical-ai-orbs",
+  "version": "0.1.0",
+  "description": "Accessible animated status orbs for AI-assisted medical workflows.",
+  "type": "module",
+  "main": "./dist/lib/medical-ai-orbs.js",
+  "module": "./dist/lib/medical-ai-orbs.js",
+  "types": "./dist/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/medical-ai-orbs.js"
+    },
+    "./styles.css": "./dist/lib/medical-ai-orbs.css"
+  },
+  "files": [
+    "dist/lib"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build && vite build --config vite.lib.config.ts",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.2",
+    "vite-plugin-dts": "^5.0.3"
+  },
+  "keywords": [
+    "react",
+    "medical",
+    "healthcare",
+    "ai",
+    "status",
+    "animation",
+    "design-system"
+  ],
+  "license": "MIT"
+}
