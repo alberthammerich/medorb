@@ -1,6 +1,6 @@
 # medorb
 
-A motion system for clinical work in progress.
+A motion system for clinical AI work.
 
 [Live playground →](https://alberthammerich.github.io/medorb/)
 
@@ -77,7 +77,8 @@ npm run dev
 npm run check
 ```
 
-Sparked by [Thinking Orbs](https://orbs.jakubantalik.com/). Built and
-open-sourced by [Albert Hammerich](https://github.com/alberthammerich).
+Inspired by working with and contributing to
+[OpenMed](https://openmed.life/). Built and open-sourced by
+[Albert Hammerich](https://github.com/alberthammerich).
 
 MIT. Interface component only; not a medical device or clinical guidance.
