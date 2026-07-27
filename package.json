@@ -1,19 +1,19 @@
 {
-  "name": "medical-ai-orbs",
+  "name": "medorb",
   "version": "0.1.0",
-  "description": "Accessible animated status orbs for AI-assisted medical workflows.",
+  "description": "Seven animated workflow states for clinical software.",
   "author": "Albert Hammerich",
-  "homepage": "https://alberthammerich.github.io/medical-ai-orbs/",
+  "homepage": "https://alberthammerich.github.io/medorb/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alberthammerich/medical-ai-orbs.git"
+    "url": "git+https://github.com/alberthammerich/medorb.git"
   },
   "bugs": {
-    "url": "https://github.com/alberthammerich/medical-ai-orbs/issues"
+    "url": "https://github.com/alberthammerich/medorb/issues"
   },
   "type": "module",
-  "main": "./dist/lib/medical-ai-orbs.js",
-  "module": "./dist/lib/medical-ai-orbs.js",
+  "main": "./dist/lib/medorb.js",
+  "module": "./dist/lib/medorb.js",
   "types": "./dist/lib/index.d.ts",
   "sideEffects": [
     "**/*.css"
@@ -21,9 +21,9 @@
   "exports": {
     ".": {
       "types": "./dist/lib/index.d.ts",
-      "import": "./dist/lib/medical-ai-orbs.js"
+      "import": "./dist/lib/medorb.js"
     },
-    "./styles.css": "./dist/lib/medical-ai-orbs.css"
+    "./styles.css": "./dist/lib/medorb.css"
   },
   "files": [
     "dist/lib"
@@ -31,7 +31,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build && vite build --config vite.lib.config.ts",
-    "build:pages": "vite build --base=/medical-ai-orbs/",
+    "build:pages": "vite build --base=/medorb/",
     "check": "npm test && npm pack --dry-run --cache .npm-cache",
     "test": "npm run build && node scripts/smoke-test.mjs",
     "typecheck": "tsc --noEmit",

@@ -1,83 +1,63 @@
-# Medical AI Orbs
+# medorb
 
-Calm, accessible React activity indicators for clinical AI workflows.
+A motion system for clinical work in progress.
 
-## Try it
-
-[Open the interactive playground →](https://alberthammerich.github.io/medical-ai-orbs/)
-
-Switch between every workflow state, test compact and regular sizes, adjust the
-animation speed, and copy the generated React snippet.
+[Live playground →](https://alberthammerich.github.io/medorb/)
 
 ## Install
 
 ```bash
-npm install medical-ai-orbs
+npm install medorb
 ```
 
 ## Use
 
 ```tsx
-import { MedicalWorkflowOrb } from "medical-ai-orbs";
-import "medical-ai-orbs/styles.css";
+import { MedOrb } from "medorb";
+import "medorb/styles.css";
 
-export function EncounterStatus() {
-  return (
-    <MedicalWorkflowOrb
-      state="checking"
-      size={72}
-      label="Checking medication history"
-    />
-  );
-}
+<MedOrb state="checking" size={72} />
 ```
 
-## Interactive state picker
+## Switch states
 
 ```tsx
 import { useState } from "react";
 import {
-  MedicalWorkflowOrb,
+  MedOrb,
   medicalWorkflowStates,
   type MedicalWorkflowState,
-} from "medical-ai-orbs";
-import "medical-ai-orbs/styles.css";
+} from "medorb";
+import "medorb/styles.css";
 
-export function WorkflowPicker() {
+export function WorkflowSignal() {
   const [state, setState] = useState<MedicalWorkflowState>("listening");
 
   return (
-    <section>
-      <MedicalWorkflowOrb state={state} size={96} />
+    <>
+      <MedOrb state={state} size={96} />
 
-      {medicalWorkflowStates.map((option) => (
-        <button
-          type="button"
-          key={option}
-          onClick={() => setState(option)}
-        >
-          {option}
+      {medicalWorkflowStates.map((next) => (
+        <button key={next} onClick={() => setState(next)}>
+          {next}
         </button>
       ))}
-    </section>
+    </>
   );
 }
 ```
 
-The hosted playground uses this same public component API—there is no separate
-demo implementation.
-
 ## States
 
-| State | Communicates |
+| State | Signal |
 | --- | --- |
-| `listening` | Encounter capture is active |
-| `checking` | Health signals are being read |
-| `full-picture` | Patient context is being connected |
-| `documenting` | The encounter note is being written |
-| `summarizing` | Information is condensing into a brief |
-| `routing` | The next care step is being prepared |
-| `review-needed` | Work is handed to a clinician |
+| `listening` | Stream open |
+| `checking` | Reading records |
+| `full-picture` | Joining context |
+| `documenting` | Drafting note |
+| `summarizing` | Building brief |
+| `routing` | Next step |
+| `review-needed` | Clinician needed |
 
 ## Props
 
@@ -85,33 +65,19 @@ demo implementation.
 | --- | --- | --- |
 | `state` | `MedicalWorkflowState` | required |
 | `size` | `number` | `72` |
-| `label` | `string` | State-specific accessible label |
+| `label` | `string` | accessible state label |
 | `speed` | `number` | `1` |
 | `className` | `string` | `""` |
 
-`speed` is a multiplier (`2` is twice as fast). Invalid sizes and speeds fall
-back to safe values.
-
-## Accessibility
-
-- Plain-language accessible labels are included by default.
-- Custom workflow detail belongs in `label`.
-- `prefers-reduced-motion` is respected.
-- Motion indicates activity, never clinical certainty.
-
-## Develop
+Reduced motion is built in. Motion signals activity—not clinical certainty.
 
 ```bash
 npm install
 npm run dev
-npm test
 npm run check
 ```
 
-`npm run check` builds the demo and library, runs package smoke tests, and
-inspects the npm tarball. `npm run build:pages` creates the hosted playground.
+Sparked by [Thinking Orbs](https://orbs.jakubantalik.com/). Built and
+open-sourced by [Albert Hammerich](https://github.com/alberthammerich).
 
-Inspired by [Thinking Orbs](https://orbs.jakubantalik.com/), with an original
-medical workflow vocabulary and visual system.
-
-MIT. This is an interface component, not a medical device or clinical guidance.
+MIT. Interface component only; not a medical device or clinical guidance.

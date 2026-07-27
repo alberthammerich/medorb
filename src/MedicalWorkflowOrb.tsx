@@ -22,13 +22,13 @@ export interface MedicalWorkflowOrbProps {
 }
 
 const defaultLabels: Record<MedicalWorkflowState, string> = {
-  listening: "Listening to encounter",
-  checking: "Checking health data",
-  documenting: "Writing clinical note",
-  "full-picture": "Getting the full picture",
-  summarizing: "Summarizing visit",
-  routing: "Routing follow-up",
-  "review-needed": "Waiting for clinician review",
+  listening: "Encounter stream open",
+  checking: "Reading health records",
+  documenting: "Drafting encounter note",
+  "full-picture": "Joining records and signals",
+  summarizing: "Condensing encounter",
+  routing: "Routing next step",
+  "review-needed": "Clinician input needed",
 };
 
 const particleCounts: Record<MedicalWorkflowState, number> = {
