@@ -1,6 +1,6 @@
 {
   "name": "medorb",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Animated React status indicators for clinical AI and medical workflows.",
   "author": "Albert Hammerich",
   "homepage": "https://alberthammerich.github.io/medorb/",
@@ -44,11 +44,12 @@
   "devDependencies": {
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@typescript/typescript6": "^6.0.2",
+    "@vitejs/plugin-react": "^6.0.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
     "vite-plugin-dts": "^5.0.3"
   },
   "keywords": [

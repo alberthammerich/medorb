@@ -6,7 +6,11 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      include: ["src/index.ts", "src/MedicalWorkflowOrb.tsx"],
+      include: [
+        "src/index.ts",
+        "src/MedicalWorkflowOrb.tsx",
+        "src/vite-env.d.ts",
+      ],
       outDirs: ["dist/lib"],
     }),
   ],
