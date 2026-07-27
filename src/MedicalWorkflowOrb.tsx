@@ -36,9 +36,9 @@ const particleCounts: Record<MedicalWorkflowState, number> = {
   checking: 72,
   documenting: 180,
   "full-picture": 240,
-  summarizing: 120,
+  summarizing: 184,
   routing: 72,
-  "review-needed": 112,
+  "review-needed": 200,
 };
 
 const goldenAngle = Math.PI * (3 - Math.sqrt(5));
@@ -55,7 +55,13 @@ type Particle = {
   targetX?: number;
   targetY?: number;
   targetZ?: number;
-  group?: "source-left" | "source-right" | "handoff";
+  delay?: number;
+  group?:
+    | "summary-frame"
+    | "summary-rope"
+    | "review-core"
+    | "review-bridge"
+    | "review-petal";
 };
 
 function noise(seed: number) {
@@ -229,35 +235,117 @@ function particleForState(
   }
 
   if (state === "summarizing") {
-    const cluster = index % 4;
-    const clusterIndex = Math.floor(index / 4);
-    const sourceCenters = [
-      [-0.19, -0.15],
-      [0.2, -0.13],
-      [-0.18, 0.16],
-      [0.19, 0.15],
+    const frameHalfX = 0.25;
+    const frameHalfY = 0.19;
+
+    if (index < 72) {
+      const pointsPerSide = 18;
+      const side = Math.floor(index / pointsPerSide);
+      const point = index % pointsPerSide;
+      const sideProgress = point / (pointsPerSide - 1);
+      let xUnit = 0;
+      let yUnit = 0;
+      let rotation = 0;
+
+      if (side === 0 || side === 2) {
+        xUnit = -frameHalfX + sideProgress * frameHalfX * 2;
+        yUnit =
+          (side === 0 ? -frameHalfY : frameHalfY) +
+          Math.sin(sideProgress * Math.PI * 2 + side * 0.7) * 0.008;
+      } else {
+        xUnit =
+          (side === 1 ? frameHalfX : -frameHalfX) +
+          (side === 1 ? -1 : 1) *
+            Math.sin(sideProgress * Math.PI) *
+            0.028;
+        yUnit = -frameHalfY + sideProgress * frameHalfY * 2;
+        rotation = 90;
+      }
+
+      const normalizedX = xUnit / frameHalfX;
+      const normalizedY = yUnit / frameHalfY;
+      return {
+        x: xUnit * size,
+        y: yUnit * size,
+        z: 0,
+        targetX:
+          xUnit *
+          size *
+          (0.64 + Math.abs(normalizedY) * 0.2),
+        targetY:
+          (yUnit * 0.88 +
+            Math.sin(normalizedX * Math.PI) * 0.016) *
+          size,
+        targetZ:
+          Math.cos(normalizedX * Math.PI * 0.5) *
+          Math.cos(normalizedY * Math.PI * 0.5) *
+          size *
+          0.14,
+        scale: 1.02 + noise(index + 31) * 0.72,
+        alpha: 0.72 + noise(index + 41) * 0.25,
+        stretchX: 1.42,
+        stretchY: 0.9,
+        rotation,
+        delay: -Math.hypot(normalizedX, normalizedY) * 0.08,
+        group: "summary-frame",
+      };
+    }
+
+    const ropeSegments = [
+      [[-0.2, -0.17], [-0.11, 0]],
+      [[0, -0.17], [-0.11, 0]],
+      [[0, -0.17], [0.11, 0]],
+      [[0.2, -0.17], [0.11, 0]],
+      [[-0.11, 0], [-0.2, 0.17]],
+      [[-0.11, 0], [0, 0.17]],
+      [[0.11, 0], [0, 0.17]],
+      [[0.11, 0], [0.2, 0.17]],
     ];
-    const sourceAngle = clusterIndex * goldenAngle + cluster * 0.8;
-    const sourceRadius =
-      Math.sqrt(noise(index + 18)) * size * (0.058 + cluster * 0.004);
-    const targetProgress = index / count;
-    const targetY = 1 - targetProgress * 2;
-    const targetRadius = Math.sqrt(Math.max(0, 1 - targetY * targetY));
+    const ropeIndex = index - 72;
+    const pointsPerRope = 14;
+    const rope = Math.floor(ropeIndex / pointsPerRope);
+    const point = ropeIndex % pointsPerRope;
+    const ropeProgress = point / (pointsPerRope - 1);
+    const [start, end] = ropeSegments[rope];
+    const deltaX = end[0] - start[0];
+    const deltaY = end[1] - start[1];
+    const length = Math.hypot(deltaX, deltaY);
+    const perpendicularX = -deltaY / length;
+    const perpendicularY = deltaX / length;
+    const bow =
+      Math.sin(ropeProgress * Math.PI) *
+      0.007 *
+      (rope % 2 === 0 ? -1 : 1);
+    const xUnit =
+      start[0] + deltaX * ropeProgress + perpendicularX * bow;
+    const yUnit =
+      start[1] + deltaY * ropeProgress + perpendicularY * bow;
+    const normalizedX = xUnit / frameHalfX;
+    const normalizedY = yUnit / frameHalfY;
     return {
-      x:
-        sourceCenters[cluster][0] * size +
-        Math.cos(sourceAngle) * sourceRadius,
-      y:
-        sourceCenters[cluster][1] * size +
-        Math.sin(sourceAngle) * sourceRadius,
-      z: (noise(index + 38) - 0.5) * size * 0.045,
+      x: xUnit * size,
+      y: yUnit * size,
+      z: Math.sin(ropeProgress * Math.PI) * size * 0.014,
       targetX:
-        Math.cos(angle) * targetRadius * size * 0.12,
-      targetY: targetY * size * 0.12,
+        xUnit *
+        size *
+        (0.64 + Math.abs(normalizedY) * 0.2),
+      targetY:
+        (yUnit * 0.88 +
+          Math.sin(normalizedX * Math.PI) * 0.016) *
+        size,
       targetZ:
-        Math.sin(angle) * targetRadius * size * 0.065,
-      scale: 0.56 + noise(index + 58) * 0.72,
-      alpha: 0.52 + noise(index + 78) * 0.45,
+        Math.cos(normalizedX * Math.PI * 0.5) *
+        Math.cos(normalizedY * Math.PI * 0.5) *
+        size *
+        0.14,
+      scale: 0.88 + noise(index + 51) * 0.62,
+      alpha: 0.64 + noise(index + 61) * 0.32,
+      stretchX: 1.9,
+      stretchY: 0.88,
+      rotation: (Math.atan2(deltaY, deltaX) * 180) / Math.PI,
+      delay: rope * -0.035,
+      group: "summary-rope",
     };
   }
 
@@ -276,38 +364,95 @@ function particleForState(
   }
 
   if (state === "review-needed") {
-    if (index < 96) {
-      const side = index < 48 ? -1 : 1;
-      const localIndex = index % 48;
-      const fieldY = 1 - (localIndex / 47) * 2;
-      const fieldRadius = Math.sqrt(Math.max(0, 1 - fieldY * fieldY));
-      const fieldAngle = localIndex * goldenAngle;
+    if (index < 72) {
+      const coreAngle = (index / 72) * Math.PI * 2;
+      const radius = size * 0.112;
       return {
-        x:
-          side * size * 0.19 +
-          Math.cos(fieldAngle) * fieldRadius * size * 0.092,
-        y: fieldY * size * 0.13,
-        z: Math.sin(fieldAngle) * fieldRadius * size * 0.055,
-        scale: 0.52 + noise(index + 4) * 0.7,
-        alpha: 0.48 + noise(index + 14) * 0.46,
-        group: side === -1 ? "source-left" : "source-right",
+        x: Math.cos(coreAngle) * radius,
+        y: Math.sin(coreAngle) * radius,
+        z: Math.sin(coreAngle * 2) * size * 0.016,
+        targetX: Math.cos(coreAngle) * radius * 0.93,
+        targetY: Math.sin(coreAngle) * radius * 0.93,
+        targetZ: Math.sin(coreAngle * 2) * size * 0.022,
+        scale: 0.74 + noise(index + 17) * 0.5,
+        alpha: 0.64 + noise(index + 27) * 0.32,
+        delay: 0,
+        group: "review-core",
       };
     }
 
-    const handoffIndex = index - 96;
-    const handoffRadius =
-      Math.sqrt(noise(handoffIndex + 8)) * size * 0.034;
-    const handoffAngle = noise(handoffIndex + 18) * Math.PI * 2;
+    const directions = [
+      [0, -1],
+      [1, 0],
+      [0, 1],
+      [-1, 0],
+    ];
+
+    if (index < 104) {
+      const bridgeIndex = index - 72;
+      const particlesPerBridge = 8;
+      const direction = Math.floor(bridgeIndex / particlesPerBridge);
+      const point = bridgeIndex % particlesPerBridge;
+      const bridgeProgress = point / (particlesPerBridge - 1);
+      const [directionX, directionY] = directions[direction];
+      const distance = size * (0.132 + bridgeProgress * 0.058);
+      return {
+        x: directionX * distance,
+        y: directionY * distance,
+        z: Math.sin(bridgeProgress * Math.PI) * size * 0.014,
+        targetX: directionX * (distance - size * 0.008),
+        targetY: directionY * (distance - size * 0.008),
+        targetZ: Math.sin(bridgeProgress * Math.PI) * size * 0.02,
+        scale: 0.58 + noise(index + 37) * 0.44,
+        alpha: 0.38 + noise(index + 47) * 0.34,
+        stretchX: 1.42,
+        stretchY: 0.8,
+        rotation: direction * 90,
+        delay: 0,
+        group: "review-bridge",
+      };
+    }
+
+    const petalIndex = index - 104;
+    const particlesPerPetal = 24;
+    const direction = Math.floor(petalIndex / particlesPerPetal);
+    const localIndex = petalIndex % particlesPerPetal;
+    const [directionX, directionY] = directions[direction];
+    const perpendicularX = -directionY;
+    const perpendicularY = directionX;
+    const axialUnit = noise(localIndex + direction * 31 + 7) * 2 - 1;
+    const axial = axialUnit * size * 0.052;
+    const petalWidth =
+      size * (0.008 + (1 - Math.pow(Math.abs(axialUnit), 1.35)) * 0.034);
+    const lateral =
+      (noise(localIndex + direction * 47 + 19) * 2 - 1) * petalWidth;
+    const distance = size * 0.235;
+    const targetDistance = size * 0.2;
     return {
-      x: -size * 0.085 + Math.cos(handoffAngle) * handoffRadius,
-      y: Math.sin(handoffAngle) * handoffRadius,
-      z: size * 0.05,
-      targetX: size * 0.085 + Math.cos(handoffAngle) * handoffRadius,
-      targetY: Math.sin(handoffAngle) * handoffRadius,
-      targetZ: size * 0.05,
-      scale: 0.82 + noise(index + 6) * 0.74,
-      alpha: 0.82 + noise(index + 16) * 0.17,
-      group: "handoff",
+      x:
+        directionX * (distance + axial) +
+        perpendicularX * lateral,
+      y:
+        directionY * (distance + axial) +
+        perpendicularY * lateral,
+      z:
+        size *
+        (0.024 +
+          (noise(localIndex + direction * 53 + 29) - 0.5) * 0.026),
+      targetX:
+        directionX * (targetDistance + axial * 0.88) +
+        perpendicularX * lateral,
+      targetY:
+        directionY * (targetDistance + axial * 0.88) +
+        perpendicularY * lateral,
+      targetZ: size * 0.045,
+      scale: 0.72 + noise(index + 57) * 0.82,
+      alpha: 0.66 + noise(index + 67) * 0.3,
+      stretchX: 0.92 + noise(index + 77) * 0.42,
+      stretchY: 0.92 + noise(index + 87) * 0.42,
+      rotation: noise(index + 97) * 180,
+      delay: 0,
+      group: "review-petal",
     };
   }
 
@@ -377,7 +522,9 @@ export function MedicalWorkflowOrb({
                       particle.scale * (particle.stretchY ?? 1),
                     "--particle-alpha": particle.alpha,
                     "--particle-rotation": `${particle.rotation ?? 0}deg`,
-                    "--particle-delay": `${index * -0.027}s`,
+                    "--particle-delay": `${
+                      particle.delay ?? index * -0.027
+                    }s`,
                   } as CSSProperties
                 }
               />

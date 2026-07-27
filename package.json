@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Accessible animated status orbs for AI-assisted medical workflows.",
   "author": "Albert Hammerich",
-  "homepage": "https://github.com/alberthammerich/medical-ai-orbs#readme",
+  "homepage": "https://alberthammerich.github.io/medical-ai-orbs/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alberthammerich/medical-ai-orbs.git"
@@ -31,6 +31,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build && vite build --config vite.lib.config.ts",
+    "build:pages": "vite build --base=/medical-ai-orbs/",
     "check": "npm test && npm pack --dry-run --cache .npm-cache",
     "test": "npm run build && node scripts/smoke-test.mjs",
     "typecheck": "tsc --noEmit",

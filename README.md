@@ -2,6 +2,13 @@
 
 Calm, accessible React activity indicators for clinical AI workflows.
 
+## Try it
+
+[Open the interactive playground →](https://alberthammerich.github.io/medical-ai-orbs/)
+
+Switch between every workflow state, test compact and regular sizes, adjust the
+animation speed, and copy the generated React snippet.
+
 ## Install
 
 ```bash
@@ -25,7 +32,7 @@ export function EncounterStatus() {
 }
 ```
 
-### Build a state picker
+## Interactive state picker
 
 ```tsx
 import { useState } from "react";
@@ -57,8 +64,8 @@ export function WorkflowPicker() {
 }
 ```
 
-Run `npm run dev` to open the included playground. Switching state, size, or
-speed updates both the live orb and its exact import example.
+The hosted playground uses this same public component API—there is no separate
+demo implementation.
 
 ## States
 
@@ -102,7 +109,7 @@ npm run check
 ```
 
 `npm run check` builds the demo and library, runs package smoke tests, and
-inspects the npm tarball.
+inspects the npm tarball. `npm run build:pages` creates the hosted playground.
 
 Inspired by [Thinking Orbs](https://orbs.jakubantalik.com/), with an original
 medical workflow vocabulary and visual system.
