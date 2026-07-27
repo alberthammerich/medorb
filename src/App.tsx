@@ -92,7 +92,7 @@ export function App() {
         </div>
         <p className="hero__kicker">OPEN SOURCE / REACT</p>
         <h1>medorb</h1>
-        <p>A motion system for clinical work in progress.</p>
+        <p>A motion system for clinical AI work.</p>
       </header>
 
       <section className="orb-grid" id="states" aria-label="MedOrb states">
@@ -267,10 +267,16 @@ export function App() {
 
       <footer>
         <span>medorb</span>
-        <p>
-          Open-sourced by{" "}
-          <a href="https://github.com/alberthammerich">Albert Hammerich</a>
-        </p>
+        <div className="footer__credit">
+          <p>
+            Open-sourced by{" "}
+            <a href="https://github.com/alberthammerich">Albert Hammerich</a>
+          </p>
+          <p>
+            Inspired by working with and contributing to{" "}
+            <a href="https://openmed.life/">OpenMed</a>.
+          </p>
+        </div>
         <span>MIT / 2026</span>
       </footer>
     </main>

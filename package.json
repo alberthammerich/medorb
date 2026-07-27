@@ -1,7 +1,7 @@
 {
   "name": "medorb",
   "version": "0.1.0",
-  "description": "Seven animated workflow states for clinical software.",
+  "description": "A motion system for clinical AI work.",
   "author": "Albert Hammerich",
   "homepage": "https://alberthammerich.github.io/medorb/",
   "repository": {
