@@ -36,9 +36,9 @@ const particleCounts: Record<MedicalWorkflowState, number> = {
   checking: 72,
   documenting: 180,
   "full-picture": 240,
-  summarizing: 184,
+  summarizing: 168,
   routing: 72,
-  "review-needed": 200,
+  "review-needed": 168,
 };
 
 const goldenAngle = Math.PI * (3 - Math.sqrt(5));
@@ -56,12 +56,6 @@ type Particle = {
   targetY?: number;
   targetZ?: number;
   delay?: number;
-  group?:
-    | "summary-frame"
-    | "summary-rope"
-    | "review-core"
-    | "review-bridge"
-    | "review-petal";
 };
 
 function noise(seed: number) {
@@ -235,117 +229,27 @@ function particleForState(
   }
 
   if (state === "summarizing") {
-    const frameHalfX = 0.25;
-    const frameHalfY = 0.19;
+    // A sphere of context distilled into a single flat disc: the brief.
+    // Both forms share one golden-angle spiral, so the collapse stays ordered
+    // and the disc settles into a phyllotaxis pattern.
+    const sphereRadius = size * 0.3;
+    const yUnit = 1 - ((index + 0.5) / count) * 2;
+    const ringRadius = Math.sqrt(Math.max(0, 1 - yUnit * yUnit));
+    const discRadius = size * 0.335 * Math.sqrt((index + 0.5) / count);
 
-    if (index < 72) {
-      const pointsPerSide = 18;
-      const side = Math.floor(index / pointsPerSide);
-      const point = index % pointsPerSide;
-      const sideProgress = point / (pointsPerSide - 1);
-      let xUnit = 0;
-      let yUnit = 0;
-      let rotation = 0;
-
-      if (side === 0 || side === 2) {
-        xUnit = -frameHalfX + sideProgress * frameHalfX * 2;
-        yUnit =
-          (side === 0 ? -frameHalfY : frameHalfY) +
-          Math.sin(sideProgress * Math.PI * 2 + side * 0.7) * 0.008;
-      } else {
-        xUnit =
-          (side === 1 ? frameHalfX : -frameHalfX) +
-          (side === 1 ? -1 : 1) *
-            Math.sin(sideProgress * Math.PI) *
-            0.028;
-        yUnit = -frameHalfY + sideProgress * frameHalfY * 2;
-        rotation = 90;
-      }
-
-      const normalizedX = xUnit / frameHalfX;
-      const normalizedY = yUnit / frameHalfY;
-      return {
-        x: xUnit * size,
-        y: yUnit * size,
-        z: 0,
-        targetX:
-          xUnit *
-          size *
-          (0.64 + Math.abs(normalizedY) * 0.2),
-        targetY:
-          (yUnit * 0.88 +
-            Math.sin(normalizedX * Math.PI) * 0.016) *
-          size,
-        targetZ:
-          Math.cos(normalizedX * Math.PI * 0.5) *
-          Math.cos(normalizedY * Math.PI * 0.5) *
-          size *
-          0.14,
-        scale: 1.02 + noise(index + 31) * 0.72,
-        alpha: 0.72 + noise(index + 41) * 0.25,
-        stretchX: 1.42,
-        stretchY: 0.9,
-        rotation,
-        delay: -Math.hypot(normalizedX, normalizedY) * 0.08,
-        group: "summary-frame",
-      };
-    }
-
-    const ropeSegments = [
-      [[-0.2, -0.17], [-0.11, 0]],
-      [[0, -0.17], [-0.11, 0]],
-      [[0, -0.17], [0.11, 0]],
-      [[0.2, -0.17], [0.11, 0]],
-      [[-0.11, 0], [-0.2, 0.17]],
-      [[-0.11, 0], [0, 0.17]],
-      [[0.11, 0], [0, 0.17]],
-      [[0.11, 0], [0.2, 0.17]],
-    ];
-    const ropeIndex = index - 72;
-    const pointsPerRope = 14;
-    const rope = Math.floor(ropeIndex / pointsPerRope);
-    const point = ropeIndex % pointsPerRope;
-    const ropeProgress = point / (pointsPerRope - 1);
-    const [start, end] = ropeSegments[rope];
-    const deltaX = end[0] - start[0];
-    const deltaY = end[1] - start[1];
-    const length = Math.hypot(deltaX, deltaY);
-    const perpendicularX = -deltaY / length;
-    const perpendicularY = deltaX / length;
-    const bow =
-      Math.sin(ropeProgress * Math.PI) *
-      0.007 *
-      (rope % 2 === 0 ? -1 : 1);
-    const xUnit =
-      start[0] + deltaX * ropeProgress + perpendicularX * bow;
-    const yUnit =
-      start[1] + deltaY * ropeProgress + perpendicularY * bow;
-    const normalizedX = xUnit / frameHalfX;
-    const normalizedY = yUnit / frameHalfY;
     return {
-      x: xUnit * size,
-      y: yUnit * size,
-      z: Math.sin(ropeProgress * Math.PI) * size * 0.014,
-      targetX:
-        xUnit *
-        size *
-        (0.64 + Math.abs(normalizedY) * 0.2),
-      targetY:
-        (yUnit * 0.88 +
-          Math.sin(normalizedX * Math.PI) * 0.016) *
-        size,
-      targetZ:
-        Math.cos(normalizedX * Math.PI * 0.5) *
-        Math.cos(normalizedY * Math.PI * 0.5) *
-        size *
-        0.14,
-      scale: 0.88 + noise(index + 51) * 0.62,
-      alpha: 0.64 + noise(index + 61) * 0.32,
-      stretchX: 1.9,
-      stretchY: 0.88,
-      rotation: (Math.atan2(deltaY, deltaX) * 180) / Math.PI,
-      delay: rope * -0.035,
-      group: "summary-rope",
+      x: Math.cos(angle) * ringRadius * sphereRadius,
+      y: yUnit * sphereRadius,
+      z: Math.sin(angle) * ringRadius * sphereRadius,
+      targetX: Math.cos(angle) * discRadius,
+      targetY: Math.sin(angle) * discRadius,
+      targetZ: 0,
+      // Keep the spread tight so the disc's phyllotaxis pattern stays legible.
+      scale: 0.86 + noise(index + 11) * 0.3,
+      alpha: 0.7 + noise(index + 29) * 0.28,
+      // A slight ripple from the centre of the disc outwards. Keep it small:
+      // a wide spread splits the sphere mid-collapse and reads as a glitch.
+      delay: -(index / count) * 0.22,
     };
   }
 
@@ -364,95 +268,43 @@ function particleForState(
   }
 
   if (state === "review-needed") {
-    if (index < 72) {
-      const coreAngle = (index / 72) * Math.PI * 2;
-      const radius = size * 0.112;
-      return {
-        x: Math.cos(coreAngle) * radius,
-        y: Math.sin(coreAngle) * radius,
-        z: Math.sin(coreAngle * 2) * size * 0.016,
-        targetX: Math.cos(coreAngle) * radius * 0.93,
-        targetY: Math.sin(coreAngle) * radius * 0.93,
-        targetZ: Math.sin(coreAngle * 2) * size * 0.022,
-        scale: 0.74 + noise(index + 17) * 0.5,
-        alpha: 0.64 + noise(index + 27) * 0.32,
-        delay: 0,
-        group: "review-core",
-      };
-    }
-
-    const directions = [
-      [0, -1],
-      [1, 0],
-      [0, 1],
-      [-1, 0],
+    // A wireframe octahedron: the one orb in the set that stops and holds.
+    // Particles trace the 12 edges, brightening towards the corners.
+    const arm = size * 0.29;
+    const vertices = [
+      [0, -arm, 0],
+      [arm, 0, 0],
+      [0, 0, arm],
+      [-arm, 0, 0],
+      [0, 0, -arm],
+      [0, arm, 0],
     ];
+    const edges = [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [0, 4],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 1],
+      [5, 1],
+      [5, 2],
+      [5, 3],
+      [5, 4],
+    ];
+    const perEdge = count / edges.length;
+    const [start, end] = edges[Math.floor(index / perEdge)];
+    const edgeProgress = ((index % perEdge) + 0.5) / perEdge;
+    const corner = 1 - Math.sin(edgeProgress * Math.PI);
 
-    if (index < 104) {
-      const bridgeIndex = index - 72;
-      const particlesPerBridge = 8;
-      const direction = Math.floor(bridgeIndex / particlesPerBridge);
-      const point = bridgeIndex % particlesPerBridge;
-      const bridgeProgress = point / (particlesPerBridge - 1);
-      const [directionX, directionY] = directions[direction];
-      const distance = size * (0.132 + bridgeProgress * 0.058);
-      return {
-        x: directionX * distance,
-        y: directionY * distance,
-        z: Math.sin(bridgeProgress * Math.PI) * size * 0.014,
-        targetX: directionX * (distance - size * 0.008),
-        targetY: directionY * (distance - size * 0.008),
-        targetZ: Math.sin(bridgeProgress * Math.PI) * size * 0.02,
-        scale: 0.58 + noise(index + 37) * 0.44,
-        alpha: 0.38 + noise(index + 47) * 0.34,
-        stretchX: 1.42,
-        stretchY: 0.8,
-        rotation: direction * 90,
-        delay: 0,
-        group: "review-bridge",
-      };
-    }
-
-    const petalIndex = index - 104;
-    const particlesPerPetal = 24;
-    const direction = Math.floor(petalIndex / particlesPerPetal);
-    const localIndex = petalIndex % particlesPerPetal;
-    const [directionX, directionY] = directions[direction];
-    const perpendicularX = -directionY;
-    const perpendicularY = directionX;
-    const axialUnit = noise(localIndex + direction * 31 + 7) * 2 - 1;
-    const axial = axialUnit * size * 0.052;
-    const petalWidth =
-      size * (0.008 + (1 - Math.pow(Math.abs(axialUnit), 1.35)) * 0.034);
-    const lateral =
-      (noise(localIndex + direction * 47 + 19) * 2 - 1) * petalWidth;
-    const distance = size * 0.235;
-    const targetDistance = size * 0.2;
     return {
-      x:
-        directionX * (distance + axial) +
-        perpendicularX * lateral,
-      y:
-        directionY * (distance + axial) +
-        perpendicularY * lateral,
-      z:
-        size *
-        (0.024 +
-          (noise(localIndex + direction * 53 + 29) - 0.5) * 0.026),
-      targetX:
-        directionX * (targetDistance + axial * 0.88) +
-        perpendicularX * lateral,
-      targetY:
-        directionY * (targetDistance + axial * 0.88) +
-        perpendicularY * lateral,
-      targetZ: size * 0.045,
-      scale: 0.72 + noise(index + 57) * 0.82,
-      alpha: 0.66 + noise(index + 67) * 0.3,
-      stretchX: 0.92 + noise(index + 77) * 0.42,
-      stretchY: 0.92 + noise(index + 87) * 0.42,
-      rotation: noise(index + 97) * 180,
+      x: vertices[start][0] + (vertices[end][0] - vertices[start][0]) * edgeProgress,
+      y: vertices[start][1] + (vertices[end][1] - vertices[start][1]) * edgeProgress,
+      z: vertices[start][2] + (vertices[end][2] - vertices[start][2]) * edgeProgress,
+      scale: 0.66 + corner * 0.62 + noise(index + 23) * 0.22,
+      alpha: 0.58 + corner * 0.32 + noise(index + 43) * 0.12,
       delay: 0,
-      group: "review-petal",
     };
   }
 
@@ -507,7 +359,6 @@ export function MedicalWorkflowOrb({
             return (
               <span
                 key={index}
-                data-particle-group={particle.group}
                 style={
                   {
                     "--particle-x": `${particle.x}px`,
