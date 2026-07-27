@@ -10,6 +10,49 @@ permissions:
   contents: read
 
 jobs:
+  version:
+    name: Version
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Require a version bump for core changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- \
+            src/ \
+            scripts/smoke-test.mjs \
+            vite.lib.config.ts; then
+            echo "No package code changed."
+            exit 0
+          fi
+
+          BASE_VERSION="$(
+            git show "$BASE_SHA:package.json" |
+              node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).version))"
+          )"
+          HEAD_VERSION="$(node -p "require('./package.json').version")"
+
+          if [ "$BASE_VERSION" = "$HEAD_VERSION" ]; then
+            echo "::error::Core package changes require a package.json version bump."
+            exit 1
+          fi
+
+          echo "Version: $BASE_VERSION -> $HEAD_VERSION"
+
   package:
     name: Node ${{ matrix.node }}
     runs-on: ubuntu-latest
@@ -21,10 +64,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
           cache: npm
