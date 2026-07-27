@@ -1,7 +1,7 @@
 {
   "name": "medorb",
-  "version": "0.1.0",
-  "description": "A motion system for clinical AI work.",
+  "version": "0.1.1",
+  "description": "Animated React status indicators for clinical AI and medical workflows.",
   "author": "Albert Hammerich",
   "homepage": "https://alberthammerich.github.io/medorb/",
   "repository": {
@@ -53,11 +53,23 @@
   },
   "keywords": [
     "react",
+    "react-component",
+    "typescript",
     "medical",
+    "medical-ai",
     "healthcare",
+    "healthcare-ui",
+    "healthtech",
+    "clinical-ai",
+    "ehr",
     "ai",
     "status",
+    "status-indicator",
+    "activity-indicator",
+    "loading-animation",
+    "workflow-status",
     "animation",
+    "accessibility",
     "design-system"
   ],
   "license": "MIT",

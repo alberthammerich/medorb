@@ -1,0 +1,39 @@
+:root {
+  background: #060707;
+  color: #f4f6f5;
+  font-family: "Avenir Next", Avenir, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  align-items: center;
+  display: grid;
+  gap: 32px;
+  justify-items: center;
+  min-height: 100vh;
+}
+
+label {
+  color: #7d8481;
+  display: grid;
+  font-size: 12px;
+  gap: 8px;
+}
+
+select {
+  appearance: none;
+  background: #101212;
+  border: 1px solid #242828;
+  border-radius: 8px;
+  color: #f4f6f5;
+  font: inherit;
+  min-width: 220px;
+  padding: 10px 12px;
+}

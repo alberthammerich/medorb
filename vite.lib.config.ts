@@ -11,6 +11,7 @@ export default defineConfig({
     }),
   ],
   build: {
+    copyPublicDir: false,
     outDir: "dist/lib",
     emptyOutDir: false,
     lib: {
