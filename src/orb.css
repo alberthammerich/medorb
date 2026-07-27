@@ -141,16 +141,26 @@
 }
 
 .medical-orb--summarizing {
-  --orb-rgb: 233 214 255;
+  --orb-rgb: 220 230 255;
 }
 
 .medical-orb--summarizing .medical-orb__particles {
-  animation: summary-breathe calc(var(--orb-speed) * 7.2) ease-in-out infinite;
+  animation: summary-membrane-float calc(var(--orb-speed) * 7) ease-in-out
+    infinite;
 }
 
 .medical-orb--summarizing .medical-orb__particles span {
-  animation: summary-resolve calc(var(--orb-speed) * 7.2)
-    cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation: summary-membrane-warp calc(var(--orb-speed) * 6.4)
+    cubic-bezier(0.55, 0.08, 0.3, 1) infinite;
+  animation-delay: var(--particle-delay);
+  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.48);
+}
+
+.medical-orb--summarizing
+  .medical-orb__particles
+  span[data-particle-group="summary-frame"] {
+  --orb-rgb: 232 238 255;
+  box-shadow: 0 0 8px rgb(var(--orb-rgb) / 0.62);
 }
 
 .medical-orb--routing {
@@ -167,34 +177,36 @@
 }
 
 .medical-orb--review-needed {
-  --orb-rgb: 255 165 150;
+  --orb-rgb: 255 201 183;
 }
 
 .medical-orb--review-needed .medical-orb__particles {
-  animation: handoff-breathe calc(var(--orb-speed) * 5.8) ease-in-out infinite;
+  animation: review-focus-float calc(var(--orb-speed) * 7.2) ease-in-out
+    infinite;
 }
 
 .medical-orb--review-needed .medical-orb__particles span {
-  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.35);
+  animation: review-focus-core calc(var(--orb-speed) * 4.2) ease-in-out infinite;
+  animation-delay: var(--particle-delay);
+  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.42);
 }
 
 .medical-orb--review-needed
   .medical-orb__particles
-  span[data-particle-group="source-left"] {
-  --orb-rgb: 192 226 255;
+  span[data-particle-group="review-bridge"] {
+  animation: review-focus-bridge calc(var(--orb-speed) * 4.2) ease-in-out
+    infinite;
+  animation-delay: var(--particle-delay);
 }
 
 .medical-orb--review-needed
   .medical-orb__particles
-  span[data-particle-group="source-right"] {
-  --orb-rgb: 205 255 226;
-}
-
-.medical-orb--review-needed
-  .medical-orb__particles
-  span[data-particle-group="handoff"] {
-  animation: handoff-signal calc(var(--orb-speed) * 4.8)
-    cubic-bezier(0.55, 0, 0.25, 1) infinite;
+  span[data-particle-group="review-petal"] {
+  --orb-rgb: 255 176 154;
+  animation: review-focus-gather calc(var(--orb-speed) * 4.2)
+    cubic-bezier(0.55, 0.08, 0.3, 1) infinite;
+  animation-delay: var(--particle-delay);
+  box-shadow: 0 0 7px rgb(var(--orb-rgb) / 0.56);
 }
 
 @keyframes orb-turn {
@@ -302,21 +314,22 @@
   }
 }
 
-@keyframes summary-breathe {
+@keyframes summary-membrane-float {
   0%,
   100% {
-    transform: scale(0.98);
+    transform: rotateX(-4deg) rotateY(-5deg) translateY(-1px) scale(0.985);
   }
   50% {
-    transform: scale(1.02);
+    transform: rotateX(5deg) rotateY(5deg) translateY(1px) scale(1.015);
   }
 }
 
-@keyframes summary-resolve {
+@keyframes summary-membrane-warp {
   0%,
-  18%,
+  14%,
   100% {
-    filter: brightness(0.62);
+    filter: brightness(0.76);
+    opacity: calc(var(--particle-alpha) * 0.82);
     transform:
       translate3d(
         var(--particle-x),
@@ -326,9 +339,10 @@
       rotate(var(--particle-rotation))
       scale(var(--particle-scale-x), var(--particle-scale-y));
   }
-  52%,
-  78% {
-    filter: brightness(1.22);
+  48%,
+  66% {
+    filter: brightness(1.24);
+    opacity: var(--particle-alpha);
     transform:
       translate3d(
         var(--particle-target-x),
@@ -350,21 +364,22 @@
   }
 }
 
-@keyframes handoff-breathe {
+@keyframes review-focus-float {
   0%,
   100% {
-    transform: scale(0.98);
+    transform: rotateX(-3deg) translateY(-1px) scale(0.985);
   }
   50% {
-    transform: scale(1.02);
+    transform: rotateX(3deg) translateY(1px) scale(1.015);
   }
 }
 
-@keyframes handoff-signal {
+@keyframes review-focus-core {
   0%,
-  20%,
+  16%,
   100% {
-    filter: brightness(0.7);
+    filter: brightness(0.76);
+    opacity: calc(var(--particle-alpha) * 0.8);
     transform:
       translate3d(
         var(--particle-x),
@@ -374,9 +389,10 @@
       rotate(var(--particle-rotation))
       scale(var(--particle-scale-x), var(--particle-scale-y));
   }
-  58%,
-  82% {
-    filter: brightness(1.35);
+  48%,
+  66% {
+    filter: brightness(1.18);
+    opacity: var(--particle-alpha);
     transform:
       translate3d(
         var(--particle-target-x),
@@ -385,6 +401,68 @@
       )
       rotate(var(--particle-rotation))
       scale(var(--particle-scale-x), var(--particle-scale-y));
+  }
+}
+
+@keyframes review-focus-bridge {
+  0%,
+  16%,
+  100% {
+    filter: brightness(0.62);
+    opacity: calc(var(--particle-alpha) * 0.58);
+    transform:
+      translate3d(
+        var(--particle-x),
+        var(--particle-y),
+        var(--particle-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y));
+  }
+  48%,
+  66% {
+    filter: brightness(1.12);
+    opacity: var(--particle-alpha);
+    transform:
+      translate3d(
+        var(--particle-target-x),
+        var(--particle-target-y),
+        var(--particle-target-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y));
+  }
+}
+
+@keyframes review-focus-gather {
+  0%,
+  16%,
+  100% {
+    filter: brightness(0.74);
+    opacity: calc(var(--particle-alpha) * 0.8);
+    transform:
+      translate3d(
+        var(--particle-x),
+        var(--particle-y),
+        var(--particle-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y))
+      scale(0.96);
+  }
+  48%,
+  66% {
+    filter: brightness(1.26);
+    opacity: var(--particle-alpha);
+    transform:
+      translate3d(
+        var(--particle-target-x),
+        var(--particle-target-y),
+        var(--particle-target-z)
+      )
+      rotate(var(--particle-rotation))
+      scale(var(--particle-scale-x), var(--particle-scale-y))
+      scale(1.06);
   }
 }
 
