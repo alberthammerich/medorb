@@ -1,0 +1,37 @@
+name: Request a workflow state
+description: Propose a clinical AI state that MedOrb does not express yet.
+title: "State: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: moment
+    attributes:
+      label: Workflow moment
+      description: What is the system doing, and what should the person understand?
+      placeholder: The system is reconciling medications across two records.
+    validations:
+      required: true
+
+  - type: input
+    id: label
+    attributes:
+      label: Plain-language label
+      description: The short status shown beside the motion.
+      placeholder: Reconciling medications
+    validations:
+      required: true
+
+  - type: textarea
+    id: motion
+    attributes:
+      label: Motion idea
+      description: Optional. Describe the rhythm, shape, or transformation without prescribing an icon.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Product context
+      description: Where would this appear? Do not include patient or sensitive data.
+    validations:
+      required: true

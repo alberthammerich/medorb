@@ -2,7 +2,24 @@
 
 A motion system for clinical AI work.
 
-[Live playground →](https://alberthammerich.github.io/medorb/)
+[Live playground](https://alberthammerich.github.io/medorb/) ·
+[npm](https://www.npmjs.com/package/medorb) ·
+[Run the example](https://stackblitz.com/github/alberthammerich/medorb/tree/main/examples/vite?file=src%2FApp.tsx)
+
+[![npm version](https://img.shields.io/npm/v/medorb?style=flat-square&color=91c7b6&labelColor=101212)](https://www.npmjs.com/package/medorb)
+[![npm downloads](https://img.shields.io/npm/dm/medorb?style=flat-square&color=91c7b6&labelColor=101212)](https://www.npmjs.com/package/medorb)
+[![CI](https://img.shields.io/github/actions/workflow/status/alberthammerich/medorb/ci.yml?branch=main&style=flat-square&label=checks&labelColor=101212)](https://github.com/alberthammerich/medorb/actions/workflows/ci.yml)
+
+<a href="https://alberthammerich.github.io/medorb/">
+  <img
+    src="./.github/assets/medorb-preview.gif"
+    alt="Seven animated MedOrb states: listening, checking data, full picture, documenting, summarising, routing, and review needed."
+    width="960"
+  />
+</a>
+
+Open-source React status indicators for clinical AI and medical workflows.
+Each state has its own motion language and a plain-language accessible label.
 
 ## Install
 
@@ -18,6 +35,8 @@ import "medorb/styles.css";
 
 <MedOrb state="checking" size={72} />
 ```
+
+[`Open this example in StackBlitz →`](https://stackblitz.com/github/alberthammerich/medorb/tree/main/examples/vite?file=src%2FApp.tsx)
 
 ## Switch states
 
@@ -70,6 +89,8 @@ export function WorkflowSignal() {
 | `className` | `string` | `""` |
 
 Reduced motion is built in. Motion signals activity—not clinical certainty.
+
+## Develop
 
 ```bash
 npm install
