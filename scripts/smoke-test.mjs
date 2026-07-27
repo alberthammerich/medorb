@@ -2,15 +2,17 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import {
+  MedOrb,
   MedicalWorkflowOrb,
   medicalWorkflowStates,
-} from "../dist/lib/medical-ai-orbs.js";
+} from "../dist/lib/medorb.js";
 
 assert.equal(medicalWorkflowStates.length, 7);
+assert.equal(MedOrb, MedicalWorkflowOrb);
 
 for (const state of medicalWorkflowStates) {
   const html = renderToStaticMarkup(
-    createElement(MedicalWorkflowOrb, {
+    createElement(MedOrb, {
       state,
       label: `Testing ${state}`,
       size: 48,

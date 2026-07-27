@@ -15,8 +15,8 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       entry: "src/index.ts",
-      name: "MedicalAiOrbs",
-      fileName: "medical-ai-orbs",
+      name: "MedOrb",
+      fileName: "medorb",
       formats: ["es"],
     },
     rollupOptions: {

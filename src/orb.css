@@ -141,26 +141,21 @@
 }
 
 .medical-orb--summarizing {
-  --orb-rgb: 220 230 255;
+  --orb-rgb: 218 214 255;
 }
 
 .medical-orb--summarizing .medical-orb__particles {
-  animation: summary-membrane-float calc(var(--orb-speed) * 7) ease-in-out
-    infinite;
+  animation: summary-turn calc(var(--orb-speed) * 9) linear infinite;
 }
 
 .medical-orb--summarizing .medical-orb__particles span {
-  animation: summary-membrane-warp calc(var(--orb-speed) * 6.4)
-    cubic-bezier(0.55, 0.08, 0.3, 1) infinite;
+  animation: summary-distill calc(var(--orb-speed) * 5.8)
+    cubic-bezier(0.62, 0, 0.24, 1) infinite;
   animation-delay: var(--particle-delay);
-  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.48);
 }
 
-.medical-orb--summarizing
-  .medical-orb__particles
-  span[data-particle-group="summary-frame"] {
-  --orb-rgb: 232 238 255;
-  box-shadow: 0 0 8px rgb(var(--orb-rgb) / 0.62);
+.medical-orb--summarizing .medical-orb__aura {
+  animation: summary-bloom calc(var(--orb-speed) * 5.8) ease-in-out infinite;
 }
 
 .medical-orb--routing {
@@ -177,36 +172,23 @@
 }
 
 .medical-orb--review-needed {
-  --orb-rgb: 255 201 183;
+  --orb-rgb: 255 205 168;
 }
 
+/* Particles are flat elements, so the sway stays under ~10deg: past that they
+   turn edge-on and the wireframe thins out. */
 .medical-orb--review-needed .medical-orb__particles {
-  animation: review-focus-float calc(var(--orb-speed) * 7.2) ease-in-out
-    infinite;
+  animation: review-sway calc(var(--orb-speed) * 7.6) ease-in-out infinite;
 }
 
 .medical-orb--review-needed .medical-orb__particles span {
-  animation: review-focus-core calc(var(--orb-speed) * 4.2) ease-in-out infinite;
+  animation: review-pulse calc(var(--orb-speed) * 3.8) ease-in-out infinite;
   animation-delay: var(--particle-delay);
-  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.42);
+  box-shadow: 0 0 5px rgb(var(--orb-rgb) / 0.5);
 }
 
-.medical-orb--review-needed
-  .medical-orb__particles
-  span[data-particle-group="review-bridge"] {
-  animation: review-focus-bridge calc(var(--orb-speed) * 4.2) ease-in-out
-    infinite;
-  animation-delay: var(--particle-delay);
-}
-
-.medical-orb--review-needed
-  .medical-orb__particles
-  span[data-particle-group="review-petal"] {
-  --orb-rgb: 255 176 154;
-  animation: review-focus-gather calc(var(--orb-speed) * 4.2)
-    cubic-bezier(0.55, 0.08, 0.3, 1) infinite;
-  animation-delay: var(--particle-delay);
-  box-shadow: 0 0 7px rgb(var(--orb-rgb) / 0.56);
+.medical-orb--review-needed .medical-orb__aura {
+  animation: review-bloom calc(var(--orb-speed) * 3.8) ease-in-out infinite;
 }
 
 @keyframes orb-turn {
@@ -314,34 +296,32 @@
   }
 }
 
-@keyframes summary-membrane-float {
-  0%,
-  100% {
-    transform: rotateX(-4deg) rotateY(-5deg) translateY(-1px) scale(0.985);
+@keyframes summary-turn {
+  from {
+    transform: rotateX(-24deg) rotateZ(0deg);
   }
-  50% {
-    transform: rotateX(5deg) rotateY(5deg) translateY(1px) scale(1.015);
+  to {
+    transform: rotateX(-24deg) rotateZ(360deg);
   }
 }
 
-@keyframes summary-membrane-warp {
+@keyframes summary-distill {
   0%,
-  14%,
+  22%,
   100% {
-    filter: brightness(0.76);
-    opacity: calc(var(--particle-alpha) * 0.82);
+    filter: brightness(0.78);
+    opacity: calc(var(--particle-alpha) * 0.74);
     transform:
       translate3d(
         var(--particle-x),
         var(--particle-y),
         var(--particle-z)
       )
-      rotate(var(--particle-rotation))
       scale(var(--particle-scale-x), var(--particle-scale-y));
   }
   48%,
-  66% {
-    filter: brightness(1.24);
+  70% {
+    filter: brightness(1.32);
     opacity: var(--particle-alpha);
     transform:
       translate3d(
@@ -349,8 +329,22 @@
         var(--particle-target-y),
         var(--particle-target-z)
       )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y));
+      scale(var(--particle-scale-x), var(--particle-scale-y))
+      scale(1.12);
+  }
+}
+
+@keyframes summary-bloom {
+  0%,
+  22%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  48%,
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
   }
 }
 
@@ -364,105 +358,38 @@
   }
 }
 
-@keyframes review-focus-float {
+/* The only orb that stays put: it holds its shape and simply breathes. */
+@keyframes review-sway {
   0%,
   100% {
-    transform: rotateX(-3deg) translateY(-1px) scale(0.985);
+    transform: rotateX(-12deg) rotateY(-9deg) scale(0.98);
   }
   50% {
-    transform: rotateX(3deg) translateY(1px) scale(1.015);
+    transform: rotateX(-4deg) rotateY(9deg) scale(1.02);
   }
 }
 
-@keyframes review-focus-core {
+@keyframes review-pulse {
   0%,
-  16%,
   100% {
-    filter: brightness(0.76);
-    opacity: calc(var(--particle-alpha) * 0.8);
-    transform:
-      translate3d(
-        var(--particle-x),
-        var(--particle-y),
-        var(--particle-z)
-      )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y));
+    filter: brightness(0.82);
+    opacity: calc(var(--particle-alpha) * 0.72);
   }
-  48%,
-  66% {
-    filter: brightness(1.18);
+  50% {
+    filter: brightness(1.38);
     opacity: var(--particle-alpha);
-    transform:
-      translate3d(
-        var(--particle-target-x),
-        var(--particle-target-y),
-        var(--particle-target-z)
-      )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y));
   }
 }
 
-@keyframes review-focus-bridge {
+@keyframes review-bloom {
   0%,
-  16%,
   100% {
-    filter: brightness(0.62);
-    opacity: calc(var(--particle-alpha) * 0.58);
-    transform:
-      translate3d(
-        var(--particle-x),
-        var(--particle-y),
-        var(--particle-z)
-      )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y));
+    opacity: 0.5;
+    transform: scale(0.94);
   }
-  48%,
-  66% {
-    filter: brightness(1.12);
-    opacity: var(--particle-alpha);
-    transform:
-      translate3d(
-        var(--particle-target-x),
-        var(--particle-target-y),
-        var(--particle-target-z)
-      )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y));
-  }
-}
-
-@keyframes review-focus-gather {
-  0%,
-  16%,
-  100% {
-    filter: brightness(0.74);
-    opacity: calc(var(--particle-alpha) * 0.8);
-    transform:
-      translate3d(
-        var(--particle-x),
-        var(--particle-y),
-        var(--particle-z)
-      )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y))
-      scale(0.96);
-  }
-  48%,
-  66% {
-    filter: brightness(1.26);
-    opacity: var(--particle-alpha);
-    transform:
-      translate3d(
-        var(--particle-target-x),
-        var(--particle-target-y),
-        var(--particle-target-z)
-      )
-      rotate(var(--particle-rotation))
-      scale(var(--particle-scale-x), var(--particle-scale-y))
-      scale(1.06);
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
   }
 }
 

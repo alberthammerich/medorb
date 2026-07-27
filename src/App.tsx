@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-  MedicalWorkflowOrb,
+  MedicalWorkflowOrb as MedOrb,
   type MedicalWorkflowState,
 } from "./MedicalWorkflowOrb";
 
@@ -12,37 +12,37 @@ const states: Array<{
   {
     state: "listening",
     label: "Listening",
-    detail: "Capture is active",
+    detail: "stream open",
   },
   {
     state: "checking",
     label: "Checking data",
-    detail: "Reading health signals",
+    detail: "reading records",
   },
   {
     state: "full-picture",
-    label: "Getting the full picture",
-    detail: "Connecting the patient context",
+    label: "Full picture",
+    detail: "joining context",
   },
   {
     state: "documenting",
     label: "Documenting",
-    detail: "Writing the encounter note",
+    detail: "drafting note",
   },
   {
     state: "summarizing",
     label: "Summarising",
-    detail: "Preparing the clinical brief",
+    detail: "building brief",
   },
   {
     state: "routing",
     label: "Routing",
-    detail: "Finding the next care step",
+    detail: "next step",
   },
   {
     state: "review-needed",
     label: "Review needed",
-    detail: "Waiting for a clinician",
+    detail: "clinician needed",
   },
 ];
 
@@ -58,7 +58,7 @@ export function App() {
   const active = states.find((item) => item.state === activeState)!;
   const code = useMemo(
     () =>
-      `import { MedicalWorkflowOrb } from 'medical-ai-orbs';\nimport 'medical-ai-orbs/styles.css';\n\n<MedicalWorkflowOrb state="${activeState}" size={${
+      `import { MedOrb } from 'medorb';\nimport 'medorb/styles.css';\n\n<MedOrb state="${activeState}" size={${
         size === "regular" ? 72 : 24
       }} />`,
     [activeState, size],
@@ -76,42 +76,40 @@ export function App() {
   return (
     <main>
       <nav className="nav" aria-label="Page navigation">
-        <a className="nav__mark" href="#top" aria-label="Medical AI Orbs home">
-          <MedicalWorkflowOrb state="listening" size={28} />
+        <a className="nav__mark" href="#top" aria-label="MedOrb home">
+          <MedOrb state="listening" size={28} />
         </a>
         <div className="nav__links">
           <a href="#states">States</a>
-          <a href="#usage">Usage</a>
-          <a href="#playground">Playground</a>
+          <a href="#usage">Install</a>
+          <a href="#playground">Try it</a>
         </div>
       </nav>
 
       <header className="hero" id="top">
         <div className="hero__icon">
-          <MedicalWorkflowOrb state="listening" size={68} />
+          <MedOrb state="listening" size={68} />
         </div>
-        <p className="hero__kicker">React component</p>
-        <h1>Medical AI orbs</h1>
-        <p>
-          Quiet, legible activity indicators for clinical AI workflows.
-        </p>
+        <p className="hero__kicker">OPEN SOURCE / REACT</p>
+        <h1>medorb</h1>
+        <p>A motion system for clinical work in progress.</p>
       </header>
 
-      <section className="orb-grid" id="states" aria-label="Medical AI states">
+      <section className="orb-grid" id="states" aria-label="MedOrb states">
         {states.map((item, index) => (
           <article
             className={`orb-card orb-card--${item.state}`}
             key={item.state}
           >
             <span className="orb-card__number">0{index + 1}</span>
-            <MedicalWorkflowOrb
+            <MedOrb
               state={item.state}
               size={item.state === "full-picture" ? 170 : 150}
               speed={speed}
             />
             <span className="status-pill">
               <span aria-hidden="true">
-                <MedicalWorkflowOrb
+                <MedOrb
                   state={item.state}
                   size={20}
                   speed={speed}
@@ -130,15 +128,13 @@ export function App() {
         <div className="docs__section">
           <div className="section-title">
             <span>01</span>
-            <h2>Installation</h2>
+            <h2>Install</h2>
           </div>
           <div className="code-line">
-            <code>npm install medical-ai-orbs</code>
+            <code>npm install medorb</code>
             <button
               type="button"
-              onClick={() =>
-                void copyText("install", "npm install medical-ai-orbs")
-              }
+              onClick={() => void copyText("install", "npm install medorb")}
             >
               {copied === "install" ? "Copied" : "Copy"}
             </button>
@@ -148,25 +144,21 @@ export function App() {
         <div className="docs__section">
           <div className="section-title">
             <span>02</span>
-            <h2>Usage</h2>
+            <h2>Render one</h2>
           </div>
           <div className="code-block">
             <pre>
               <code>
                 <span className="syntax-muted">import</span>{" "}
-                <span className="syntax-bright">
-                  {"{ MedicalWorkflowOrb }"}
-                </span>{" "}
+                <span className="syntax-bright">{"{ MedOrb }"}</span>{" "}
                 <span className="syntax-muted">from</span>{" "}
-                <span className="syntax-string">'medical-ai-orbs'</span>;
+                <span className="syntax-string">'medorb'</span>;
                 {"\n"}
                 <span className="syntax-muted">import</span>{" "}
-                <span className="syntax-string">
-                  'medical-ai-orbs/styles.css'
-                </span>;
+                <span className="syntax-string">'medorb/styles.css'</span>;
                 {"\n\n"}
                 {"<"}
-                <span className="syntax-bright">MedicalWorkflowOrb</span>{" "}
+                <span className="syntax-bright">MedOrb</span>{" "}
                 state=<span className="syntax-string">"checking"</span> size=
                 <span className="syntax-string">{"{72}"}</span> {"/>"}
               </code>
@@ -176,7 +168,7 @@ export function App() {
               onClick={() =>
                 void copyText(
                   "usage",
-                  `import { MedicalWorkflowOrb } from 'medical-ai-orbs';\nimport 'medical-ai-orbs/styles.css';\n\n<MedicalWorkflowOrb state="checking" size={72} />`,
+                  `import { MedOrb } from 'medorb';\nimport 'medorb/styles.css';\n\n<MedOrb state="checking" size={72} />`,
                 )
               }
             >
@@ -189,13 +181,13 @@ export function App() {
       <section className="playground" id="playground">
         <div className="section-title">
           <span>03</span>
-          <h2>Playground</h2>
+          <h2>Tune it</h2>
         </div>
 
         <div className="playground__panel">
           <div className="controls">
             <fieldset>
-              <legend>State</legend>
+              <legend>state</legend>
               <div className="segmented segmented--wrap">
                 {states.map((item) => (
                   <button
@@ -211,7 +203,7 @@ export function App() {
             </fieldset>
 
             <fieldset>
-              <legend>Size</legend>
+              <legend>size</legend>
               <div className="segmented">
                 <button
                   type="button"
@@ -231,7 +223,7 @@ export function App() {
             </fieldset>
 
             <fieldset className="speed-control">
-              <legend>Speed</legend>
+              <legend>speed</legend>
               <div>
                 <input
                   type="range"
@@ -248,7 +240,7 @@ export function App() {
           </div>
 
           <div className="playground__stage">
-            <MedicalWorkflowOrb
+            <MedOrb
               state={activeState}
               size={size === "regular" ? 154 : 52}
               speed={speed}
@@ -274,12 +266,12 @@ export function App() {
       </section>
 
       <footer>
-        <span>Medical AI orbs</span>
+        <span>medorb</span>
         <p>
-          Activity, not certainty. Always pair motion with plain-language
-          status.
+          Open-sourced by{" "}
+          <a href="https://github.com/alberthammerich">Albert Hammerich</a>
         </p>
-        <span>MIT · 2026</span>
+        <span>MIT / 2026</span>
       </footer>
     </main>
   );

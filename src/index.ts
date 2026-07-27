@@ -1,5 +1,6 @@
 export {
   MedicalWorkflowOrb,
+  MedicalWorkflowOrb as MedOrb,
   medicalWorkflowStates,
   type MedicalWorkflowOrbProps,
   type MedicalWorkflowState,
