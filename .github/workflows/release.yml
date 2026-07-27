@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "scripts/smoke-test.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.lib.config.ts"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - name: Use pinned npm
+        run: npm install --global npm@11.10.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test package
+        run: npm run check
+
+      - name: Check release version
+        id: release
+        shell: bash
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          if npm view "medorb@$VERSION" version >/tmp/medorb-version 2>/tmp/medorb-error; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "medorb@$VERSION is already published."
+          elif grep -q "E404" /tmp/medorb-error; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "medorb@$VERSION is ready to publish."
+          else
+            cat /tmp/medorb-error
+            exit 1
+          fi
+
+      - name: Publish to npm
+        if: steps.release.outputs.publish == 'true'
+        run: npm publish --access public
+
+      - name: Create GitHub release
+        if: steps.release.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "medorb $VERSION" \
+            --generate-notes

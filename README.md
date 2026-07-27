@@ -77,6 +77,12 @@ npm run dev
 npm run check
 ```
 
+## Release
+
+Core package changes require a version bump. After they land on `main`, the
+release workflow tests and publishes to npm, then creates the GitHub release
+and tag as its final step.
+
 Inspired by working with and contributing to
 [OpenMed](https://openmed.life/). Built and open-sourced by
 [Albert Hammerich](https://github.com/alberthammerich).
