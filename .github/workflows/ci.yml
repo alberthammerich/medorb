@@ -33,7 +33,10 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- \
-            src/ \
+            src/MedicalWorkflowOrb.tsx \
+            src/index.ts \
+            src/orb.css \
+            src/vite-env.d.ts \
             scripts/smoke-test.mjs \
             vite.lib.config.ts; then
             echo "No package code changed."
