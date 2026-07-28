@@ -5,7 +5,10 @@ on:
     branches:
       - main
     paths:
-      - "src/**"
+      - "src/MedicalWorkflowOrb.tsx"
+      - "src/index.ts"
+      - "src/orb.css"
+      - "src/vite-env.d.ts"
       - "scripts/smoke-test.mjs"
       - "package.json"
       - "package-lock.json"
