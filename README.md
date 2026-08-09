@@ -88,7 +88,9 @@ export function WorkflowSignal() {
 | `speed` | `number` | `1` |
 | `className` | `string` | `""` |
 
-Reduced motion is built in. Motion signals activity—not clinical certainty.
+Reduced motion is built in. The orb is a polite live region, so screen
+readers announce each state change. Motion signals activity—not clinical
+certainty.
 
 ## Develop
 

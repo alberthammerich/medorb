@@ -19,9 +19,15 @@ for (const state of medicalWorkflowStates) {
     }),
   );
 
-  assert.match(html, /role="img"/);
+  assert.match(html, /role="status"/);
   assert.match(html, new RegExp(`data-state="${state}"`));
-  assert.match(html, new RegExp(`aria-label="Testing ${state}`));
+  assert.match(
+    html,
+    new RegExp(
+      `<span class="medical-orb__label">Testing ${state}\\. AI workflow status\\.</span>`,
+    ),
+  );
+  assert.match(html, /aria-hidden="true"/);
   assert.doesNotMatch(html, /NaN|Infinity|undefined/);
 }
 

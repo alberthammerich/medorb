@@ -12,6 +12,17 @@
   width: var(--orb-size);
 }
 
+/* Visually hidden, kept in the accessibility tree so the status region
+   announces label changes. */
+.medical-orb__label {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .medical-orb__field {
   height: 100%;
   position: relative;

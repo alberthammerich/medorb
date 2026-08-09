@@ -1,6 +1,6 @@
 {
   "name": "medorb",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Animated React status indicators for clinical AI and medical workflows.",
   "author": "Albert Hammerich",
   "homepage": "https://alberthammerich.github.io/medorb/",

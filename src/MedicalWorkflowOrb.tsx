@@ -348,10 +348,14 @@ export function MedicalWorkflowOrb({
     <div
       className={`medical-orb medical-orb--${state} ${className}`.trim()}
       style={style}
-      role="img"
-      aria-label={`${accessibleLabel}. AI workflow status.`}
+      role="status"
       data-state={state}
     >
+      {/* Visually hidden text inside a status region: label changes are
+          announced politely, unlike an aria-label swap on a role="img". */}
+      <span className="medical-orb__label">
+        {`${accessibleLabel}. AI workflow status.`}
+      </span>
       <div className="medical-orb__field" aria-hidden="true">
         <div className="medical-orb__aura" />
         <div className="medical-orb__particles">
